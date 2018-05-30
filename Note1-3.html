@@ -1,0 +1,1145 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>数据操作 &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="自动求梯度" href="autograd.html" />
+    <link rel="prev" title="安装和运行" href="install.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">机器学习简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html">安装和运行</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">数据操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#创建NDArray">创建NDArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#运算">运算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#广播机制">广播机制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#运算的内存开销">运算的内存开销</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#索引">索引</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#NDArray和NumPy相互变换">NDArray和NumPy相互变换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">自动求梯度</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_supervised-learning/index.html">深度学习基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">预备知识</a> &raquo;</li>
+        
+      <li>数据操作</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_crashcourse/ndarray.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="数据操作">
+<h1>数据操作<a class="headerlink" href="#数据操作" title="永久链接至标题">¶</a></h1>
+<p>在深度学习中，我们通常会频繁地对数据进行操作。作为动手学深度学习的基础，本节将介绍如何对内存中的数据进行操作。</p>
+<p>在MXNet中，NDArray是存储和变换数据的主要工具。如果你之前用过NumPy，你会发现NDArray和NumPy的多维数组非常类似。然而，NDArray提供更多的功能，例如CPU和GPU的异步计算，以及自动求导。这些都使得NDArray更加适合深度学习。</p>
+<div class="section" id="创建NDArray">
+<h2>创建NDArray<a class="headerlink" href="#创建NDArray" title="永久链接至标题">¶</a></h2>
+<p>我们先介绍NDArray的最基本功能。如果你对我们用到的数学操作不是很熟悉，可以参阅<a class="reference internal" href="../chapter_appendix/math.html"><span class="doc">“数学基础”</span></a>一节。</p>
+<p>首先从MXNet导入NDArray。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">nd</span>
+</pre></div>
+</div>
+</div>
+<p>然后我们用NDArray创建一个行向量。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[2]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.]
+&lt;NDArray 12 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>以上创建的NDArray一共包含12个元素（element），分别为<code class="docutils literal"><span class="pre">arange(12)</span></code>所指定的从0开始的12个连续整数。可以看到，打印的<code class="docutils literal"><span class="pre">x</span></code>中还标注了属性<code class="docutils literal"><span class="pre">&lt;NDArray</span> <span class="pre">12</span> <span class="pre">&#64;cpu(0)&gt;</span></code>。其中，12指的是NDArray的形状，即向量的长度；而&#64;cpu(0)说明默认情况下NDArray被创建在CPU上。</p>
+<p>下面使用<code class="docutils literal"><span class="pre">reshape</span></code>函数把向量<code class="docutils literal"><span class="pre">x</span></code>的形状改为(3,
+4)，也就是一个3行4列的矩阵。除了形状改变之外，<code class="docutils literal"><span class="pre">x</span></code>中的元素保持不变。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  0.   1.   2.   3.]
+ [  4.   5.   6.   7.]
+ [  8.   9.  10.  11.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>上面<code class="docutils literal"><span class="pre">x.reshape((3,</span> <span class="pre">4))</span></code>也可写成<code class="docutils literal"><span class="pre">x.reshape((-1,</span> <span class="pre">4))</span></code>或<code class="docutils literal"><span class="pre">x.reshape((3,</span> <span class="pre">-1))</span></code>。由于<code class="docutils literal"><span class="pre">x</span></code>的元素个数是已知的，这里的<code class="docutils literal"><span class="pre">-1</span></code>是能够通过元素个数和其他维的大小推断出来的。</p>
+<p>接下来，我们创建一个各元素为0，形状为(2, 3,
+4)的张量。实际上，之前创建的向量和矩阵都是特殊的张量。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[4]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[[ 0.  0.  0.  0.]
+  [ 0.  0.  0.  0.]
+  [ 0.  0.  0.  0.]]
+
+ [[ 0.  0.  0.  0.]
+  [ 0.  0.  0.  0.]
+  [ 0.  0.  0.  0.]]]
+&lt;NDArray 2x3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>类似地，我们可以创建各元素为1的张量。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[5]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 1.  1.  1.  1.]
+ [ 1.  1.  1.  1.]
+ [ 1.  1.  1.  1.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>我们也可以通过Python的列表（list）指定需要创建的NDArray中每个元素的值。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 2.  1.  4.  3.]
+ [ 1.  2.  3.  4.]
+ [ 4.  3.  2.  1.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>有些情况下，我们需要随机生成NDArray中每个元素的值。下面我们创建一个形状为(3,
+4)的NDArray。它的每个元素都随机采样于均值为0标准差为1的正态分布。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 2.21220636  0.7740038   1.04344046  1.18392551]
+ [ 1.89171135 -1.23474145 -1.771029   -0.45138445]
+ [ 0.57938355 -1.85608196 -1.9768796  -0.20801921]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>每个NDArray的形状可以通过<code class="docutils literal"><span class="pre">shape</span></code>属性来获取。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[8]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(3, 4)
+</pre></div>
+</div>
+</div>
+<p>一个NDArray的大小（size）即其元素的总数。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>12
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="运算">
+<h2>运算<a class="headerlink" href="#运算" title="永久链接至标题">¶</a></h2>
+<p>NDArray支持大量的运算符（operator）。例如，我们可以对之前创建的两个形状为(3,
+4)的NDArray做按元素加法。所得结果形状不变。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[10]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  2.   2.   6.   6.]
+ [  5.   7.   9.  11.]
+ [ 12.  12.  12.  12.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>以下是按元素乘法。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[11]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  0.   1.   8.   9.]
+ [  4.  10.  18.  28.]
+ [ 32.  27.  20.  11.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>以下是按元素除法。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  0.     1.     0.5    1.  ]
+ [  4.     2.5    2.     1.75]
+ [  2.     3.     5.    11.  ]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>以下是按元素做指数运算。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[13]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  7.38905621   2.71828175  54.59814835  20.08553696]
+ [  2.71828175   7.38905621  20.08553696  54.59814835]
+ [ 54.59814835  20.08553696   7.38905621   2.71828175]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>我们也可以使用条件判断式来得到元素为0或1的新的NDArray。以<code class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">y</span></code>为例，如果<code class="docutils literal"><span class="pre">x</span></code>和<code class="docutils literal"><span class="pre">y</span></code>在相同位置的条件判断为真（值相等），那么新NDArray在相同位置的值为1；反之为0。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[14]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 0.  1.  0.  1.]
+ [ 0.  0.  0.  0.]
+ [ 0.  0.  0.  0.]]
+&lt;NDArray 3x4 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>接下来，我们对矩阵<code class="docutils literal"><span class="pre">y</span></code>做转置，并做矩阵乘法操作。由于<code class="docutils literal"><span class="pre">x</span></code>是3行4列的矩阵，<code class="docutils literal"><span class="pre">y</span></code>转置为4行3列的矩阵，两个矩阵相乘得到3行3列的矩阵。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">nd</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[15]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  18.   20.   10.]
+ [  58.   60.   50.]
+ [  98.  100.   90.]]
+&lt;NDArray 3x3 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>下面，我们对NDArray中的元素求和。结果虽然是个标量，却依然保留了NDArray格式。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[16]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[ 7.]
+&lt;NDArray 1 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>其实，我们可以把为标量的NDArray通过<code class="docutils literal"><span class="pre">asscalar</span></code>函数直接变换为Python中的数。下面例子中<code class="docutils literal"><span class="pre">x</span></code>的<span class="math">\(L_2\)</span>范数不再是一个NDArray。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[17]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>5.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="广播机制">
+<h2>广播机制<a class="headerlink" href="#广播机制" title="永久链接至标题">¶</a></h2>
+<p>正如我们所见，我们可以对两个形状相同的NDArray做按元素操作。然而，当我们对两个形状不同的NDArray做按元素操作时，可能会触发广播（broadcasting）机制：先令这两个NDArray形状相同再按元素操作。</p>
+<p>让我们先看个例子。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">a</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[18]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[ 0.]
+  [ 1.]
+  [ 2.]]
+ &lt;NDArray 3x1 @cpu(0)&gt;,
+ [[ 0.  1.]]
+ &lt;NDArray 1x2 @cpu(0)&gt;,
+ [[ 0.  1.]
+  [ 1.  2.]
+  [ 2.  3.]]
+ &lt;NDArray 3x2 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+<p>由于<code class="docutils literal"><span class="pre">a</span></code>和<code class="docutils literal"><span class="pre">b</span></code>分别是3行1列和1行2列的矩阵，为了使它们可以按元素相加，计算时<code class="docutils literal"><span class="pre">a</span></code>中第一列的三个元素被广播（复制）到了第二列，而<code class="docutils literal"><span class="pre">b</span></code>中第一行的两个元素被广播（复制）到了第二行和第三行。如此，我们就可以对两个3行2列的矩阵按元素相加，得到上面的结果。</p>
+</div>
+<div class="section" id="运算的内存开销">
+<h2>运算的内存开销<a class="headerlink" href="#运算的内存开销" title="永久链接至标题">¶</a></h2>
+<p>在前面的例子中，我们为每个操作新开内存来存储它的结果。举个例子，假设<code class="docutils literal"><span class="pre">x</span></code>和<code class="docutils literal"><span class="pre">y</span></code>都是NDArray，在执行<code class="docutils literal"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>操作后,
+<code class="docutils literal"><span class="pre">y</span></code>所对应的内存地址将变成为存储<code class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>计算结果而新开内存的地址。为了展示这一点，我们可以使用Python自带的<code class="docutils literal"><span class="pre">id</span></code>函数：如果两个实例的ID一致，它们所对应的内存地址相同；反之则不同。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [19]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">before</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span>
+<span class="nb">id</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">before</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[19]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>False
+</pre></div>
+</div>
+</div>
+<p>在下面的例子中，我们先通过<code class="docutils literal"><span class="pre">nd.zeros_like(y)</span></code>创建和<code class="docutils literal"><span class="pre">y</span></code>形状相同且元素为0的NDArray，记为<code class="docutils literal"><span class="pre">z</span></code>。接下来，我们把<code class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>的结果通过<code class="docutils literal"><span class="pre">[:]</span></code>写进<code class="docutils literal"><span class="pre">z</span></code>所对应的内存中。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [20]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">z</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">before</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">z</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="nb">id</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="n">before</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[20]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>True
+</pre></div>
+</div>
+</div>
+<p>然而，这里我们还是为<code class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>创建了临时内存来存储计算结果，再复制到<code class="docutils literal"><span class="pre">z</span></code>所对应的内存。为了避免这个内存开销，我们可以使用运算符的全名函数中的<code class="docutils literal"><span class="pre">out</span></code>参数。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [21]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">nd</span><span class="o">.</span><span class="n">elemwise_add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+<span class="nb">id</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="n">before</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[21]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>True
+</pre></div>
+</div>
+</div>
+<p>如果现有的NDArray的值在之后的程序中不会复用，我们也可以用
+<code class="docutils literal"><span class="pre">x[:]</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code> 或者 <code class="docutils literal"><span class="pre">x</span> <span class="pre">+=</span> <span class="pre">y</span></code> 来减少运算的内存开销。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [22]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">before</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">+=</span> <span class="n">y</span>
+<span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">before</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[22]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="索引">
+<h2>索引<a class="headerlink" href="#索引" title="永久链接至标题">¶</a></h2>
+<p>在NDArray中，索引（index）代表了元素的位置。NDArray的索引从0开始逐一递增。例如一个3行2列的矩阵的行索引分别为0、1和2，列索引分别为0和1。</p>
+<p>在下面的例子中，我们指定了NDArray的行索引截取范围[1:3]。依据左闭右开指定范围的惯例，它截取了矩阵<code class="docutils literal"><span class="pre">x</span></code>中行索引为1和2的两行。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [23]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[23]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[ 0.  1.  2.]
+  [ 3.  4.  5.]
+  [ 6.  7.  8.]]
+ &lt;NDArray 3x3 @cpu(0)&gt;,
+ [[ 3.  4.  5.]
+  [ 6.  7.  8.]]
+ &lt;NDArray 2x3 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+<p>我们可以指定NDArray中需要访问的单个元素的位置，例如矩阵中行和列的索引，并重设该元素的值。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [24]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[24]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 0.  1.  2.]
+ [ 3.  4.  9.]
+ [ 6.  7.  8.]]
+&lt;NDArray 3x3 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>当然，我们也可以截取一部分元素，并重设它们的值。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [25]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[25]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[  0.   1.   2.]
+ [  3.  10.  10.]
+ [  6.   7.   8.]]
+&lt;NDArray 3x3 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="NDArray和NumPy相互变换">
+<h2>NDArray和NumPy相互变换<a class="headerlink" href="#NDArray和NumPy相互变换" title="永久链接至标题">¶</a></h2>
+<p>我们可以通过<code class="docutils literal"><span class="pre">array</span></code>和<code class="docutils literal"><span class="pre">asnumpy</span></code>函数令数据在NDArray和Numpy格式之间相互转换。以下是一个例子。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [26]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># NumPy变换成NDArray。</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>  <span class="c1"># NDArray变换成NumPy。</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[26]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(array([[ 1.,  1.,  1.],
+        [ 1.,  1.,  1.]], dtype=float32),
+ [[ 1.  1.  1.]
+  [ 1.  1.  1.]]
+ &lt;NDArray 2x3 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>NDArray是MXNet中存储和变换数据的主要工具。</li>
+<li>我们可以轻松地对NDArray进行创建、运算、指定索引和与NumPy之间的相互变换。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>运行本节代码。将本节中条件判断式<code class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">y</span></code>改为<code class="docutils literal"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">y</span></code>或<code class="docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">y</span></code>，看看能够得到什么样的NDArray。</li>
+<li>将广播机制中按元素操作的两个NDArray替换成其他形状，结果是否和预期一样？</li>
+<li>查阅MXNet官方网站上的<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html">文档</a>，了解NDArray支持的其他操作。</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/745">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_ndarray.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="autograd.html" class="btn btn-neutral float-right" title="自动求梯度" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="安装和运行" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

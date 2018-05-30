@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>安装和运行 &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="数据操作" href="ndarray.html" />
+    <link rel="prev" title="机器学习简介" href="introduction.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">机器学习简介</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">安装和运行</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#获取代码并安装运行环境">获取代码并安装运行环境</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#选项一：通过Conda安装（推荐）">选项一：通过Conda安装（推荐）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#选项二：通过Docker安装">选项二：通过Docker安装</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#更新代码和运行环境">更新代码和运行环境</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#选项一：通过Conda更新（推荐）">选项一：通过Conda更新（推荐）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#选项二：通过Docker更新">选项二：通过Docker更新</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#选项三：通过Git更新">选项三：通过Git更新</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#高级选项">高级选项</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#使用GPU">使用GPU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#用Jupyter-Notebook读写GitHub源文件">用Jupyter Notebook读写GitHub源文件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#在远端服务器上运行Jupyter-Notebook">在远端服务器上运行Jupyter Notebook</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#运行计时">运行计时</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">数据操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">自动求梯度</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_supervised-learning/index.html">深度学习基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">预备知识</a> &raquo;</li>
+        
+      <li>安装和运行</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_crashcourse/install.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="安装和运行">
+<h1>安装和运行<a class="headerlink" href="#安装和运行" title="永久链接至标题">¶</a></h1>
+<p>为了便于动手学深度学习，让我们获取本书代码、安装并运行所需要的工具，例如MXNet。在这一节中，我们将描述安装和运行所需要的命令。执行命令需要进入命令行模式：Linux/macOS用户可以打开Terminal应用，Windows用户可以在文件资源管理器的地址栏输入<code class="docutils literal"><span class="pre">cmd</span></code>。</p>
+<div class="section" id="获取代码并安装运行环境">
+<h2>获取代码并安装运行环境<a class="headerlink" href="#获取代码并安装运行环境" title="永久链接至标题">¶</a></h2>
+<p>我们可以通过Conda或者Docker来获取本书代码并安装运行环境。下面将分别介绍这两种选项。</p>
+<div class="section" id="选项一：通过Conda安装（推荐）">
+<h3>选项一：通过Conda安装（推荐）<a class="headerlink" href="#选项一：通过Conda安装（推荐）" title="永久链接至标题">¶</a></h3>
+<p>第一步，根据操作系统下载并安装Miniconda（网址：<a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a>
+）。</p>
+<p>第二步，下载包含本书全部代码的包，解压后进入文件夹。Linux/macOS用户可以使用如下命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span>
+<span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">zh</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">ai</span><span class="o">/</span><span class="n">gluon_tutorials_zh</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">-</span><span class="n">o</span> <span class="n">tutorials</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">xzvf</span> <span class="n">tutorials</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="n">tutorials</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Windows用户可以用浏览器下载压缩文件（下载地址：<a class="reference external" href="https://zh.gluon.ai/gluon_tutorials_zh.zip">https://zh.gluon.ai/gluon_tutorials_zh.zip</a>
+）并解压。在解压目录文件资源管理器的地址栏输入<code class="docutils literal"><span class="pre">cmd</span></code>进入命令行模式。</p>
+<p>在本步骤中，我们也可以配置下载源来使用国内镜像加速下载:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># 优先使用清华 conda 镜像。</span>
+<span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">prepend</span> <span class="n">channels</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mirrors</span><span class="o">.</span><span class="n">tuna</span><span class="o">.</span><span class="n">tsinghua</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">anaconda</span><span class="o">/</span><span class="n">pkgs</span><span class="o">/</span><span class="n">free</span><span class="o">/</span>
+
+<span class="c1"># 或者选用科大 conda 镜像。</span>
+<span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">prepend</span> <span class="n">channels</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">mirrors</span><span class="o">.</span><span class="n">ustc</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">anaconda</span><span class="o">/</span><span class="n">pkgs</span><span class="o">/</span><span class="n">free</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>第三步，安装运行所需的依赖包并激活该运行环境。Linux/macOS用户可以使用如下命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">source</span> <span class="n">activate</span> <span class="n">gluon</span>
+</pre></div>
+</div>
+<p>由于教程会使用<code class="docutils literal"><span class="pre">matplotlib.plot</span></code>函数作图，macOS用户需要创建或访问<code class="docutils literal"><span class="pre">~/.matplotlib/matplotlibrc</span></code>文件并添加一行代码：<code class="docutils literal"><span class="pre">backend:</span> <span class="pre">TkAgg</span></code>。</p>
+<p>Windows用户可以使用如下命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">activate</span> <span class="n">gluon</span>
+</pre></div>
+</div>
+<p>第四步，打开Juputer notebook。运行下面命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span>
+</pre></div>
+</div>
+<p>这时在浏览器打开 <a class="reference external" href="http://localhost:8888">http://localhost:8888</a>
+（通常会自动打开）就可以查看和运行本书中每一节的代码了。</p>
+<p>第五步（可选项），如果你是国内用户，建议使用国内Gluon镜像加速数据集和预训练模型的下载。Linux/macOS用户可以运行下面命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MXNET_GLUON_REPO</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">apache</span><span class="o">-</span><span class="n">mxnet</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">cn</span><span class="o">-</span><span class="n">north</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span> <span class="n">jupyter</span> <span class="n">notebook</span>
+</pre></div>
+</div>
+<p>Windows用户可以运行下面命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">MXNET_GLUON_REPO</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">apache</span><span class="o">-</span><span class="n">mxnet</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">cn</span><span class="o">-</span><span class="n">north</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span> <span class="n">jupyter</span> <span class="n">notebook</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="选项二：通过Docker安装">
+<h3>选项二：通过Docker安装<a class="headerlink" href="#选项二：通过Docker安装" title="永久链接至标题">¶</a></h3>
+<p>第一步，下载并安装<a class="reference external" href="https://docs.docker.com/engine/installation/">Docker</a>。</p>
+<p>如果你是Linux用户，可以运行下面命令。之后登出一次。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">qO</span><span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">get</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="o">|</span> <span class="n">sh</span>
+<span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">aG</span> <span class="n">docker</span>
+</pre></div>
+</div>
+<p>第二步，运行下面命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="n">muli</span><span class="o">/</span><span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span><span class="o">-</span><span class="n">zh</span>
+</pre></div>
+</div>
+<p>第三步，在浏览器打开http://localhost:8888
+，这时通常需要填Docker运行时产生的token。</p>
+</div>
+</div>
+<div class="section" id="更新代码和运行环境">
+<h2>更新代码和运行环境<a class="headerlink" href="#更新代码和运行环境" title="永久链接至标题">¶</a></h2>
+<p>目前我们仍然一直在快速更新教程，通常每周都会加入新的章节。同时MXNet的Gluon前端也在快速发展，因此我们推荐大家也做及时的更新。更新包括下载最新的教程，和更新对应的依赖（通常是升级MXNet）。</p>
+<p>由于MXNet在快速发展中，我们会根据改进的MXNet版本定期更新书中的代码。同时，我们也会不断补充新的教学内容，以适应深度学习的快速发展。因此，我们推荐大家定期更新代码和运行环境。以下列举了几种更新选项。</p>
+<div class="section" id="选项一：通过Conda更新（推荐）">
+<h3>选项一：通过Conda更新（推荐）<a class="headerlink" href="#选项一：通过Conda更新（推荐）" title="永久链接至标题">¶</a></h3>
+<p>第一步，重新下载最新的包含本书全部代码的包，解压后进入文件夹。下载地址可以从以下二者之间选择。</p>
+<ul class="simple">
+<li><a class="reference external" href="https://zh.gluon.ai/gluon_tutorials_zh.zip">https://zh.gluon.ai/gluon_tutorials_zh.zip</a></li>
+<li><a class="reference external" href="https://zh.gluon.ai/gluon_tutorials_zh.tar.gz">https://zh.gluon.ai/gluon_tutorials_zh.tar.gz</a></li>
+</ul>
+<p>第二步，使用下面命令更新运行环境。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">update</span> <span class="o">-</span><span class="n">f</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="选项二：通过Docker更新">
+<h3>选项二：通过Docker更新<a class="headerlink" href="#选项二：通过Docker更新" title="永久链接至标题">¶</a></h3>
+<p>我们可以直接下载新的Docker image，例如执行下面的命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">pull</span> <span class="n">muli</span><span class="o">/</span><span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span><span class="o">-</span><span class="n">zh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="选项三：通过Git更新">
+<h3>选项三：通过Git更新<a class="headerlink" href="#选项三：通过Git更新" title="永久链接至标题">¶</a></h3>
+<p>第一步，如果你熟悉Git操作，可以直接pull并且合并可能造成的冲突：</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mli</span><span class="o">/</span><span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span><span class="o">-</span><span class="n">zh</span>
+</pre></div>
+</div>
+<p>如果不想造成冲突，在保存完有价值的本地修改以后，你可以在pull前先用reset还原到上次更新的版本：</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">reset</span> <span class="o">--</span><span class="n">hard</span>
+</pre></div>
+</div>
+<p>第二步，使用下面命令更新运行环境。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">update</span> <span class="o">-</span><span class="n">f</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="高级选项">
+<h2>高级选项<a class="headerlink" href="#高级选项" title="永久链接至标题">¶</a></h2>
+<p>以下针对不同的使用场景列举了一些安装和使用上的可选项。如果它们和你无关，请放心忽略。</p>
+<div class="section" id="使用GPU">
+<h3>使用GPU<a class="headerlink" href="#使用GPU" title="永久链接至标题">¶</a></h3>
+<p>通过上述方式安装的MXNet只支持CPU。本书中有部分章节需要或推荐使用GPU来运行。假设电脑有Nvidia显卡并且安装了CUDA7.5、8.0或9.0，那么先卸载CPU版本：</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">uninstall</span> <span class="n">mxnet</span>
+</pre></div>
+</div>
+<p>然后，根据电脑上安装的CUDA版本，使用以下三者之一安装相应的GPU版MXNet。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">cu75</span> <span class="c1"># CUDA 7.5</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">cu80</span> <span class="c1"># CUDA 8.0</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">cu90</span> <span class="c1"># CUDA 9.0</span>
+</pre></div>
+</div>
+<p>我们建议国内用户使用豆瓣pypi镜像加速下载。以mxnet-cu80为例，我们可以使用如下命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">cu80</span> <span class="o">-</span><span class="n">i</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">douban</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">simple</span> <span class="c1"># CUDA 8.0</span>
+</pre></div>
+</div>
+<p>需要注意的是，如果你安装GPU版的MXNet，使用<code class="docutils literal"><span class="pre">conda</span> <span class="pre">update</span></code>命令不会自动升级GPU版的MXNet。这时候可以运行了<code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">gluon</span></code>后手动更新MXNet。以mxnet-cu80为例，我们可以使用以下命令手动更新MXNet。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">cu80</span> <span class="c1"># CUDA 8.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="用Jupyter-Notebook读写GitHub源文件">
+<h3>用Jupyter Notebook读写GitHub源文件<a class="headerlink" href="#用Jupyter-Notebook读写GitHub源文件" title="永久链接至标题">¶</a></h3>
+<p>如果你希望为本书内容做贡献，需要修改在GitHub上Markdown格式的源文件（.md文件非.ipynb文件）。通过notedown插件，我们就可以使用Jupyter
+Notebook修改并运行Markdown格式的源代码。Linux/macOS用户可以执行以下命令获得GitHub源文件并激活运行环境。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mli</span><span class="o">/</span><span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span><span class="o">-</span><span class="n">zh</span>
+<span class="n">cd</span> <span class="n">gluon</span><span class="o">-</span><span class="n">tutorials</span><span class="o">-</span><span class="n">zh</span>
+<span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">source</span> <span class="n">activate</span> <span class="n">gluon</span> <span class="c1"># Windows 用户运行 activate gluon</span>
+</pre></div>
+</div>
+<p>下面安装notedown插件，运行Jupyter Notebook并加载插件：</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mli</span><span class="o">/</span><span class="n">notedown</span><span class="o">/</span><span class="n">tarball</span><span class="o">/</span><span class="n">master</span>
+<span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">contents_manager_class</span><span class="o">=</span><span class="s1">&#39;notedown.NotedownContentsManager&#39;</span>
+</pre></div>
+</div>
+<p>如果你希望每次运行Jupyter
+Notebook时默认开启notedown插件，可以参考下面步骤。</p>
+<p>首先，执行下面命令生成Jupyter Notebook配置文件（如果已经生成可以跳过）。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">generate</span><span class="o">-</span><span class="n">config</span>
+</pre></div>
+</div>
+<p>然后，将下面这一行加入到Jupyter
+Notebook配置文件的末尾（Linux/macOS上一般在<code class="docutils literal"><span class="pre">~/.jupyter/jupyter_notebook_config.py</span></code>)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">contents_manager_class</span> <span class="o">=</span> <span class="s1">&#39;notedown.NotedownContentsManager&#39;</span>
+</pre></div>
+</div>
+<p>之后，我们只需要运行<code class="docutils literal"><span class="pre">jupyter</span> <span class="pre">notebook</span></code>即可默认开启notedown插件。</p>
+</div>
+<div class="section" id="在远端服务器上运行Jupyter-Notebook">
+<h3>在远端服务器上运行Jupyter Notebook<a class="headerlink" href="#在远端服务器上运行Jupyter-Notebook" title="永久链接至标题">¶</a></h3>
+<p>有时候，我们希望在远端服务器上运行Jupyter
+Notebook，并通过本地电脑上的浏览器访问。如果本地机器上安装了Linux或者macOS（Windows通过第三方软件例如putty应该也能支持），那么可以使用端口映射：</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">myserver</span> <span class="o">-</span><span class="n">L</span> <span class="mi">8888</span><span class="p">:</span><span class="n">localhost</span><span class="p">:</span><span class="mi">8888</span>
+</pre></div>
+</div>
+<p>以上<code class="docutils literal"><span class="pre">myserver</span></code>是远端服务器地址。然后我们可以使用
+<a class="reference external" href="http://localhost:8888">http://localhost:8888</a> 打开远端服务器<code class="docutils literal"><span class="pre">myserver</span></code>上运行Jupyter
+Notebook。</p>
+</div>
+<div class="section" id="运行计时">
+<h3>运行计时<a class="headerlink" href="#运行计时" title="永久链接至标题">¶</a></h3>
+<p>我们可以通过ExecutionTime插件来对Jupyter
+Notebook的每个代码单元的运行计时。以下是安装该插件的命令。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyter_contrib_nbextensions</span>
+<span class="n">jupyter</span> <span class="n">contrib</span> <span class="n">nbextension</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
+<span class="n">jupyter</span> <span class="n">nbextension</span> <span class="n">enable</span> <span class="n">execute_time</span><span class="o">/</span><span class="n">ExecuteTime</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>为了能够动手学深度学习，我们需要获取本书代码并安装运行环境。</li>
+<li>我们建议大家定期更新代码和运行环境。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>获取本书代码并安装运行环境。如果你在安装时碰到任何问题，请查阅讨论区中的疑难问题汇总，或者向社区小伙伴们提问。</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/249">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_install.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ndarray.html" class="btn btn-neutral float-right" title="数据操作" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="introduction.html" class="btn btn-neutral" title="机器学习简介" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

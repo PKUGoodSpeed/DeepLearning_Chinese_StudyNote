@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>自动求梯度 &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="深度学习基础" href="../chapter_supervised-learning/index.html" />
+    <link rel="prev" title="数据操作" href="ndarray.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">机器学习简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html">安装和运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">数据操作</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">自动求梯度</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#简单例子">简单例子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#对Python控制流求梯度">对Python控制流求梯度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_supervised-learning/index.html">深度学习基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">预备知识</a> &raquo;</li>
+        
+      <li>自动求梯度</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_crashcourse/autograd.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="自动求梯度">
+<h1>自动求梯度<a class="headerlink" href="#自动求梯度" title="永久链接至标题">¶</a></h1>
+<p>在深度学习中，我们经常需要对函数求梯度（gradient）。如果你对本节中的数学概念（例如梯度）不是很熟悉，可以参阅<a class="reference internal" href="../chapter_appendix/math.html"><span class="doc">“数学基础”</span></a>一节。</p>
+<p>MXNet提供<code class="docutils literal"><span class="pre">autograd</span></code>包来自动化求梯度的过程。虽然大部分的深度学习框架要求编译计算图来自动求梯度，MXNet却无需如此。</p>
+<p>首先导入本节实验需要的包。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">nd</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="简单例子">
+<h2>简单例子<a class="headerlink" href="#简单例子" title="永久链接至标题">¶</a></h2>
+<p>我们先看一个简单例子：对函数
+<span class="math">\(y = 2\boldsymbol{x}^{\top}\boldsymbol{x}\)</span> 求关于列向量
+<span class="math">\(\boldsymbol{x}\)</span> 的梯度。</p>
+<p>我们先创建变量<code class="docutils literal"><span class="pre">x</span></code>，并赋初值。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[2]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[[ 0.]
+ [ 1.]
+ [ 2.]
+ [ 3.]]
+&lt;NDArray 4x1 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>为了求有关变量<code class="docutils literal"><span class="pre">x</span></code>的梯度，我们需要先调用<code class="docutils literal"><span class="pre">attach_grad</span></code>函数来申请存储梯度所需要的内存。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>下面定义有关变量<code class="docutils literal"><span class="pre">x</span></code>的函数。默认条件下，为了减少计算和内存开销，MXNet不会记录用于求梯度的计算图。我们需要调用<code class="docutils literal"><span class="pre">record</span></code>函数来要求MXNet记录与求梯度有关的计算。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nd</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>由于<code class="docutils literal"><span class="pre">x</span></code>的形状为(4,
+1)，<code class="docutils literal"><span class="pre">y</span></code>是一个标量。接下来我们可以通过调用<code class="docutils literal"><span class="pre">backward</span></code>函数自动求梯度。需要注意的是，如果<code class="docutils literal"><span class="pre">y</span></code>不是一个标量，MXNet将先对<code class="docutils literal"><span class="pre">y</span></code>中元素求和得到新的变量，再求该变量有关<code class="docutils literal"><span class="pre">x</span></code>的梯度。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>函数 <span class="math">\(y = 2\boldsymbol{x}^{\top}\boldsymbol{x}\)</span>
+关于<span class="math">\(\boldsymbol{x}\)</span>
+的梯度应为<span class="math">\(4\boldsymbol{x}\)</span>。现在我们来验证一下求出来的梯度是正确的。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span> <span class="c1"># 1为真，0为假。</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[  0.]
+  [  4.]
+  [  8.]
+  [ 12.]]
+ &lt;NDArray 4x1 @cpu(0)&gt;,
+ [[ 1.]
+  [ 1.]
+  [ 1.]
+  [ 1.]]
+ &lt;NDArray 4x1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="对Python控制流求梯度">
+<h2>对Python控制流求梯度<a class="headerlink" href="#对Python控制流求梯度" title="永久链接至标题">¶</a></h2>
+<p>使用MXNet的一个便利之处是，即使函数的计算图包含了Python的控制流（例如条件和循环控制），我们也有可能对变量求梯度。</p>
+<p>考虑下面程序，其中包含Python的条件和循环控制。需要强调的是，这里循环（while循环）迭代的次数和条件判断（if语句）的执行都取决于输入<code class="docutils literal"><span class="pre">b</span></code>的值。由于不同的输入会导致计算图不同，我们有时把这类计算图称作动态图。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">while</span> <span class="n">b</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<p>我们依然跟之前一样使用<code class="docutils literal"><span class="pre">record</span></code>函数记录计算图，并调用<code class="docutils literal"><span class="pre">backward</span></code>函数求梯度。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">a</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>让我们仔细观察上面定义的<span class="math">\(f\)</span>函数。事实上，给定任意输入<code class="docutils literal"><span class="pre">a</span></code>，其输出必然是
+<span class="math">\(f(a)= xa\)</span>的形式，且标量系数<span class="math">\(x\)</span>的值取决于输入<code class="docutils literal"><span class="pre">a</span></code>。由于<code class="docutils literal"><span class="pre">c</span></code>有关<code class="docutils literal"><span class="pre">a</span></code>的梯度为<span class="math">\(x = c / a\)</span>，我们可以像下面这样验证对本例中控制流求梯度的结果是正确的。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">a</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="n">c</span> <span class="o">/</span> <span class="n">a</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[ 1.]
+&lt;NDArray 1 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>MXNet提供<code class="docutils literal"><span class="pre">autograd</span></code>包来自动化求导过程。</li>
+<li>MXNet的<code class="docutils literal"><span class="pre">autograd</span></code>包可以对正常的命令式程序进行求导。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>在本节对控制流求梯度的例子中，把变量<code class="docutils literal"><span class="pre">a</span></code>改成一个随机向量或矩阵。此时计算结果<code class="docutils literal"><span class="pre">c</span></code>不再是标量，运行结果将有何变化？该如何分析此结果？</li>
+<li>自己重新设计一个对控制流求梯度的例子。运行并分析结果。</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/744">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_autograd.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../chapter_supervised-learning/index.html" class="btn btn-neutral float-right" title="深度学习基础" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ndarray.html" class="btn btn-neutral" title="数据操作" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

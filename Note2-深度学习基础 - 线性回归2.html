@@ -1,0 +1,723 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>线性回归——使用Gluon &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="分类模型" href="classification.html" />
+    <link rel="prev" title="线性回归——从零开始" href="linear-regression-scratch.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_crashcourse/index.html">预备知识</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">深度学习基础</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="shallow-model.html">单层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">线性回归——从零开始</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">线性回归——使用Gluon</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#生成数据集">生成数据集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#读取数据">读取数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义模型">定义模型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#初始化模型参数">初始化模型参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义损失函数">定义损失函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义优化算法">定义优化算法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#训练模型">训练模型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html">分类模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">Softmax回归——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-gluon.html">Softmax回归——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi-layer.html">多层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-scratch.html">多层感知机——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-gluon.html">多层感知机——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="underfit-overfit.html">欠拟合、过拟合和模型选择</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reg-scratch.html">正则化——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reg-gluon.html">正则化——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-scratch.html">丢弃法——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-gluon.html">丢弃法——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backprop.html">正向传播和反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-gluon-kfold.html">实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">深度学习基础</a> &raquo;</li>
+        
+      <li>线性回归——使用Gluon</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_supervised-learning/linear-regression-gluon.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="线性回归——使用Gluon">
+<h1>线性回归——使用Gluon<a class="headerlink" href="#线性回归——使用Gluon" title="永久链接至标题">¶</a></h1>
+<p>随着深度学习框架的发展，开发深度学习应用变得越来越便利。实践中，我们通常可以用比上一节中更简洁的代码来实现相同模型。本节中，我们将介绍如何使用MXNet提供的Gluon接口更方便地实现线性回归的训练。</p>
+<p>首先，导入本节中实验所需的一部分包或模块。我们在之前的章节里使用过它们。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">nd</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="生成数据集">
+<h2>生成数据集<a class="headerlink" href="#生成数据集" title="永久链接至标题">¶</a></h2>
+<p>我们生成与上一节中相同的数据集。其中<code class="docutils literal"><span class="pre">X</span></code>是训练数据特征，<code class="docutils literal"><span class="pre">y</span></code>是标签。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">num_inputs</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">num_examples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">true_w</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">]</span>
+<span class="n">true_b</span> <span class="o">=</span> <span class="mf">4.2</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_examples</span><span class="p">,</span> <span class="n">num_inputs</span><span class="p">))</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">true_w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">features</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">true_w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">features</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">true_b</span>
+<span class="n">labels</span> <span class="o">+=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="读取数据">
+<h2>读取数据<a class="headerlink" href="#读取数据" title="永久链接至标题">¶</a></h2>
+<p>这里，我们使用Gluon提供的<code class="docutils literal"><span class="pre">data</span></code>模块来读取数据。在每一次迭代中，我们将随机读取包含10个数据样本的小批量。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">gdata</span>
+
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">ArrayDataset</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<span class="n">data_iter</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>和上一节一样，让我们读取并打印第一个小批量数据样本。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+[[ 0.64747655  1.19423461]
+ [ 0.1037775  -0.09160773]
+ [ 0.22276424  0.28043881]
+ [-1.95122004 -1.06353188]
+ [-0.10079116  0.48418596]
+ [-0.14936529  1.38294125]
+ [-1.23825955 -0.05393763]
+ [ 0.95977837  1.11242509]
+ [-0.09322714  2.28601003]
+ [-0.47546953  0.86699176]]
+&lt;NDArray 10x2 @cpu(0)&gt;
+[ 1.42257905  4.72880602  3.69913387  3.92714834  2.36477113 -0.79261178
+  1.92389178  2.32561326 -3.76936579  0.2901226 ]
+&lt;NDArray 10 @cpu(0)&gt;
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="定义模型">
+<h2>定义模型<a class="headerlink" href="#定义模型" title="永久链接至标题">¶</a></h2>
+<p>在上一节从零开始的实现中，我们需要定义模型参数，并使用它们一步步描述模型是怎样计算的。当模型结构变得更复杂时，这些步骤将变得更加繁琐。其实，Gluon提供了大量预定义的层，这使我们只需关注使用哪些层来构造模型。下面将介绍如何使用Gluon更简洁地定义线性回归。</p>
+<p>首先，导入<code class="docutils literal"><span class="pre">nn</span></code>模块。我们先定义一个模型变量<code class="docutils literal"><span class="pre">net</span></code>，它是一个Sequential实例。在Gluon中，Sequential实例可以看做是一个串联各个层的容器。在构造模型时，我们在该容器中依次添加层。当给定输入数据时，容器中的每一层将依次计算并将输出作为下一层的输入。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">nn</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>回顾图3.1中线性回归在神经网络图中的表示。作为一个单层神经网络，线性回归输出层中的神经元和输入层中各个输入完全连接。因此，线性回归的输出层又叫全连接层。在Gluon中，全连接层是一个Dense实例。我们定义该层输出个数为1。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>值得一提的是，在Gluon中我们无需指定每一层输入的形状，例如线性回归的输入个数。当模型看见数据时，例如后面执行<code class="docutils literal"><span class="pre">net(X)</span></code>时，模型将自动推断出每一层的输入个数。我们将在之后“深度学习计算基础”一章详细介绍这个机制。Gluon的这一设计为模型开发带来便利。</p>
+</div>
+<div class="section" id="初始化模型参数">
+<h2>初始化模型参数<a class="headerlink" href="#初始化模型参数" title="永久链接至标题">¶</a></h2>
+<p>在使用<code class="docutils literal"><span class="pre">net</span></code>前，我们需要初始化模型参数，例如线性回归模型中的权重和偏差。这里我们从MXNet中导入init模块，并通过<code class="docutils literal"><span class="pre">init.Normal(sigma=0.01)</span></code>指定权重参数每个元素将在初始化时随机采样于均值为0标准差为0.01的正态分布。偏差参数全部元素初始化为零。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">init</span>
+
+<span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义损失函数">
+<h2>定义损失函数<a class="headerlink" href="#定义损失函数" title="永久链接至标题">¶</a></h2>
+<p>我们从Gluon中导入<code class="docutils literal"><span class="pre">loss</span></code>模块，并直接使用它所提供的平方损失作为模型的损失函数。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">loss</span> <span class="k">as</span> <span class="n">gloss</span>
+
+<span class="n">loss</span> <span class="o">=</span> <span class="n">gloss</span><span class="o">.</span><span class="n">L2Loss</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义优化算法">
+<h2>定义优化算法<a class="headerlink" href="#定义优化算法" title="永久链接至标题">¶</a></h2>
+<p>同样，我们也无需实现小批量随机梯度下降。在导入Gluon后，我们可以创建一个Trainer实例，并且将模型参数传递给它。下面定义了学习率为0.03的小批量随机梯度下降。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">&#39;sgd&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="训练模型">
+<h2>训练模型<a class="headerlink" href="#训练模型" title="永久链接至标题">¶</a></h2>
+<p>和上一节不同，我们通过调用<code class="docutils literal"><span class="pre">step</span></code>函数来迭代模型参数。由于变量<code class="docutils literal"><span class="pre">l</span></code>是<code class="docutils literal"><span class="pre">batch_size</span></code>维的NDArray，执行<code class="docutils literal"><span class="pre">l.backward()</span></code>等价于<code class="docutils literal"><span class="pre">l.sum().backward()</span></code>。按照小批量随机梯度下降的定义，我们在<code class="docutils literal"><span class="pre">step</span></code>函数中提供<code class="docutils literal"><span class="pre">batch_size</span></code>，以确保小批量随机梯度是该批量中每个样本梯度的平均。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;epoch </span><span class="si">%d</span><span class="s2">, loss: </span><span class="si">%f</span><span class="s2">&quot;</span>
+          <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch 1, loss: 0.040327
+epoch 2, loss: 0.000156
+epoch 3, loss: 0.000051
+</pre></div></div>
+</div>
+<p>下面我们分别比较学到的和真实的模型参数。我们从<code class="docutils literal"><span class="pre">net</span></code>获得需要的层，并访问其权重和位移。学到的和真实的参数很接近。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">dense</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">true_w</span><span class="p">,</span> <span class="n">dense</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[11]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>([2, -3.4],
+ [[ 1.99975502 -3.39933896]]
+ &lt;NDArray 1x2 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">true_b</span><span class="p">,</span> <span class="n">dense</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(4.2,
+ [ 4.19958496]
+ &lt;NDArray 1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>使用Gluon可以更简洁地实现模型。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>如果将<code class="docutils literal"><span class="pre">l</span> <span class="pre">=</span> <span class="pre">loss(output,</span> <span class="pre">y)</span></code>替换成<code class="docutils literal"><span class="pre">l</span> <span class="pre">=</span> <span class="pre">loss(output,</span> <span class="pre">y).mean()</span></code>，我们需要将<code class="docutils literal"><span class="pre">trainer.step(batch_size)</span></code>相应地改成<code class="docutils literal"><span class="pre">trainer.step(1)</span></code>。这是为什么呢？</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/742">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_linear-regression-gluon.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classification.html" class="btn btn-neutral float-right" title="分类模型" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="linear-regression-scratch.html" class="btn btn-neutral" title="线性回归——从零开始" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
