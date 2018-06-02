@@ -1,0 +1,816 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>欠拟合、过拟合和模型选择 &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="正则化——从零开始" href="reg-scratch.html" />
+    <link rel="prev" title="多层感知机——使用Gluon" href="mlp-gluon.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_crashcourse/index.html">预备知识</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">深度学习基础</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="shallow-model.html">单层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">线性回归——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-gluon.html">线性回归——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html">分类模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">Softmax回归——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-gluon.html">Softmax回归——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi-layer.html">多层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-scratch.html">多层感知机——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-gluon.html">多层感知机——使用Gluon</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">欠拟合、过拟合和模型选择</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#训练误差和泛化误差">训练误差和泛化误差</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#欠拟合和过拟合">欠拟合和过拟合</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#模型复杂度">模型复杂度</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#训练数据集大小">训练数据集大小</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#多项式函数拟合实验">多项式函数拟合实验</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#生成数据集">生成数据集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#定义、训练和测试模型">定义、训练和测试模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#三阶多项式函数拟合（正常）">三阶多项式函数拟合（正常）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#线性函数拟合（欠拟合）">线性函数拟合（欠拟合）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#训练量不足（过拟合）">训练量不足（过拟合）</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#模型选择">模型选择</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#-折交叉验证"><span class="math">\(K\)</span> 折交叉验证</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reg-scratch.html">正则化——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reg-gluon.html">正则化——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-scratch.html">丢弃法——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-gluon.html">丢弃法——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backprop.html">正向传播和反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-gluon-kfold.html">实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">深度学习基础</a> &raquo;</li>
+        
+      <li>欠拟合、过拟合和模型选择</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_supervised-learning/underfit-overfit.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="欠拟合、过拟合和模型选择">
+<h1>欠拟合、过拟合和模型选择<a class="headerlink" href="#欠拟合、过拟合和模型选择" title="永久链接至标题">¶</a></h1>
+<p>在前几节基于Fashion-MNIST数据集的实验中，我们评价了机器学习模型在训练数据集和测试数据集上的表现。如果你动手改变过实验中的模型结构或者超参数的话，你也许发现了：当模型在训练数据集上更准确时，在测试数据集上的准确率既可能上升又可能下降。这是为什么呢？</p>
+<div class="section" id="训练误差和泛化误差">
+<h2>训练误差和泛化误差<a class="headerlink" href="#训练误差和泛化误差" title="永久链接至标题">¶</a></h2>
+<p>在解释上面提到的现象之前，我们需要区分训练误差（training
+error）和泛化误差（generalization
+error）：前者指模型在训练数据集上表现出的误差，后者指模型在任意一个测试数据样本上表现出的误差的期望。训练误差和泛化误差的计算可以利用我们之前介绍过的损失函数，例如线性回归用到的平方损失函数和Softmax回归用到的交叉熵损失函数。</p>
+<p>假设训练数据集和测试数据集里的每一个样本都是从同一个概率分布中相互独立地生成的。基于该独立同分布假设，给定任意一个机器学习模型及其参数和超参数，它的训练误差的期望和泛化误差都是一样的。然而从之前的章节中我们了解到，模型的参数并不是事先给定的，而是通过训练数据集训练模型而学习出的。所以，训练误差的期望小于或等于泛化误差。也就是说，通常情况下，由训练数据集学到的模型参数会使模型在训练数据集上的表现优于或等于在测试数据集上的表现。由于无法从训练误差估计泛化误差，降低训练误差并不意味着泛化误差一定会降低。我们希望通过适当降低模型的训练误差，从而能够间接降低模型的泛化误差。</p>
+</div>
+<div class="section" id="欠拟合和过拟合">
+<h2>欠拟合和过拟合<a class="headerlink" href="#欠拟合和过拟合" title="永久链接至标题">¶</a></h2>
+<p>给定测试数据集，我们通常用机器学习模型在该测试数据集上的误差来反映泛化误差。当模型无法得到较低的训练误差时，我们将这一现象称作欠拟合（underfitting）。当模型的训练误差远小于它在测试数据集上的误差时，我们称该现象为过拟合（overfitting）。在实践中，我们要尽可能同时避免欠拟合和过拟合的出现。虽然有很多因素可能导致这两种拟合问题，在这里我们重点讨论两个因素：模型复杂度和训练数据集大小。</p>
+<div class="section" id="模型复杂度">
+<h3>模型复杂度<a class="headerlink" href="#模型复杂度" title="永久链接至标题">¶</a></h3>
+<p>为了解释模型复杂度，让我们以多项式函数拟合为例。给定一个由标量数据特征<span class="math">\(x\)</span>和对应的标量标签<span class="math">\(y\)</span>组成的训练数据集，多项式函数拟合的目标是找一个<span class="math">\(K\)</span>阶多项式函数</p>
+<div class="math">
+\[\hat{y} = b + \sum_{k=1}^K x^k w_k\]</div>
+<p>来近似<span class="math">\(y\)</span>。上式中，带下标的<span class="math">\(w\)</span>是模型的权重参数，<span class="math">\(b\)</span>是偏差参数。和线性回归相同，多项式函数拟合也使用平方损失函数。特别地，一阶多项式函数拟合又叫线性函数拟合。</p>
+<p>高阶多项式函数比低阶多项式函数的复杂度更高，例如高阶多项式函数模型参数更多，模型函数的选择范围更广。正因为如此，高阶多项式函数比低阶多项式函数更容易在相同的训练数据集上得到更低的训练误差。给定训练数据集，模型复杂度的和误差之间的关系通常如图3.4所示。给定训练数据集，如果模型的复杂度过低，很容易出现欠拟合；如果模型复杂度过高，很容易出现过拟合。</p>
+<div class="figure" id="id17">
+<img alt="模型复杂度对欠拟合和过拟合的影响" src="../_images/capacity_vs_error.svg" /><p class="caption"><span class="caption-text">模型复杂度对欠拟合和过拟合的影响</span></p>
+</div>
+</div>
+<div class="section" id="训练数据集大小">
+<h3>训练数据集大小<a class="headerlink" href="#训练数据集大小" title="永久链接至标题">¶</a></h3>
+<p>影响欠拟合和过拟合的另一个重要因素是训练数据集大小。一般来说，如果训练数据集过小，特别是比模型参数数量更小时，过拟合更容易发生。</p>
+<p>此外，泛化误差不会随训练数据集里样本数量增加而增大。因此，在计算资源允许范围之内，我们通常希望训练数据集大一些，特别当模型复杂度较高时，例如训练层数较多的深度学习模型时。</p>
+</div>
+</div>
+<div class="section" id="多项式函数拟合实验">
+<h2>多项式函数拟合实验<a class="headerlink" href="#多项式函数拟合实验" title="永久链接至标题">¶</a></h2>
+<p>为了理解模型复杂度和训练数据集大小对欠拟合和过拟合的影响，下面让我们以多项式函数拟合为例来实验。首先导入实现需要的包或模块。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">gluonbook</span> <span class="kn">as</span> <span class="nn">gb</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">nd</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">gdata</span><span class="p">,</span> <span class="n">loss</span> <span class="k">as</span> <span class="n">gloss</span><span class="p">,</span> <span class="n">nn</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="生成数据集">
+<h3>生成数据集<a class="headerlink" href="#生成数据集" title="永久链接至标题">¶</a></h3>
+<p>我们将生成一个人工数据集。在训练数据集和测试数据集中，给定样本特征<span class="math">\(x\)</span>，我们使用如下的三阶多项式函数来生成的该样本的标签：</p>
+<div class="math">
+\[y = 1.2x - 3.4x^2 + 5.6x^3 + 5 + \epsilon,\]</div>
+<p>其中噪音项<span class="math">\(\epsilon\)</span>服从均值为0和标准差为0.1的正态分布。训练数据集和测试数据集的样本数都设为100。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">n_train</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_test</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">true_w</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">]</span>
+<span class="n">true_b</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">features</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_train</span> <span class="o">+</span> <span class="n">n_test</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">poly_features</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">nd</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                          <span class="n">nd</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">(</span><span class="n">true_w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">poly_features</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">true_w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">poly_features</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+          <span class="o">+</span> <span class="n">true_w</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">poly_features</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">true_b</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">+=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>看一看生成数据集的前5个样本。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">features</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">poly_features</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="n">labels</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[ 2.21220636]
+  [ 0.7740038 ]
+  [ 1.04344046]
+  [ 1.18392551]
+  [ 1.89171135]]
+ &lt;NDArray 5x1 @cpu(0)&gt;,
+ [[  2.21220636   4.893857    10.82622147]
+  [  0.7740038    0.59908187   0.46369165]
+  [  1.04344046   1.08876801   1.13606453]
+  [  1.18392551   1.40167964   1.65948427]
+  [  1.89171135   3.5785718    6.76962519]]
+ &lt;NDArray 5x3 @cpu(0)&gt;,
+ [ 51.6748848    6.3585763    8.94907284  11.09345436  33.03696442]
+ &lt;NDArray 5 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义、训练和测试模型">
+<h3>定义、训练和测试模型<a class="headerlink" href="#定义、训练和测试模型" title="永久链接至标题">¶</a></h3>
+<p>我们先定义作图函数，其中y轴是基于对数尺度。该作图函数<code class="docutils literal"><span class="pre">semilogy</span></code>也被定义在<code class="docutils literal"><span class="pre">gluonbook</span></code>包中供后面章节调用。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">set_matplotlib_formats</span>
+<span class="k">def</span> <span class="nf">semilogy</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="n">x2_vals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">y2_vals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">legend</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)):</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">figsize</span>
+    <span class="n">set_matplotlib_formats</span><span class="p">(</span><span class="s1">&#39;retina&#39;</span><span class="p">)</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">x_label</span><span class="p">)</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x2_vals</span> <span class="ow">and</span> <span class="n">y2_vals</span><span class="p">:</span>
+        <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x2_vals</span><span class="p">,</span> <span class="n">y2_vals</span><span class="p">)</span>
+        <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>和线性回归一样，多项式函数拟合也使用平方损失函数。由于我们将尝试使用不同复杂度的模型来拟合生成的数据集，我们把模型定义部分放在<code class="docutils literal"><span class="pre">fit_and_plot</span></code>函数中。多项式函数拟合的训练和测试步骤与之前介绍的Softmax回归中的这些步骤类似。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">gloss</span><span class="o">.</span><span class="n">L2Loss</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">fit_and_plot</span><span class="p">(</span><span class="n">train_features</span><span class="p">,</span> <span class="n">test_features</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">):</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">train_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">train_iter</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">gdata</span><span class="o">.</span><span class="n">ArrayDataset</span><span class="p">(</span>
+        <span class="n">train_features</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">&#39;sgd&#39;</span><span class="p">,</span>
+                            <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">})</span>
+    <span class="n">train_ls</span><span class="p">,</span> <span class="n">test_ls</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_iter</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">train_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">train_features</span><span class="p">),</span>
+                             <span class="n">train_labels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">())</span>
+        <span class="n">test_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">test_features</span><span class="p">),</span>
+                            <span class="n">test_labels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">())</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;final epoch: train loss&#39;</span><span class="p">,</span> <span class="n">train_ls</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;test loss&#39;</span><span class="p">,</span> <span class="n">test_ls</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">semilogy</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">train_ls</span><span class="p">,</span> <span class="s1">&#39;epochs&#39;</span><span class="p">,</span> <span class="s1">&#39;loss&#39;</span><span class="p">,</span>
+             <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">test_ls</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;weight:&#39;</span><span class="p">,</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">(),</span> <span class="s1">&#39;bias:&#39;</span><span class="p">,</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="三阶多项式函数拟合（正常）">
+<h3>三阶多项式函数拟合（正常）<a class="headerlink" href="#三阶多项式函数拟合（正常）" title="永久链接至标题">¶</a></h3>
+<p>我们先使用与数据生成函数同阶的三阶多项式函数拟合。实验表明，这个模型的训练误差和在测试数据集的误差都较低。训练出的模型参数也接近真实值。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">fit_and_plot</span><span class="p">(</span><span class="n">poly_features</span><span class="p">[:</span><span class="n">n_train</span><span class="p">,</span> <span class="p">:],</span> <span class="n">poly_features</span><span class="p">[</span><span class="n">n_train</span><span class="p">:,</span> <span class="p">:],</span>
+             <span class="n">labels</span><span class="p">[:</span><span class="n">n_train</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">n_train</span><span class="p">:])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+final epoch: train loss 0.00713618 test loss 0.0112353
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/chapter_supervised-learning_underfit-overfit_11_1.png" src="../_images/chapter_supervised-learning_underfit-overfit_11_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(&#39;weight:&#39;,
+ [[ 1.32816124 -3.36217523  5.56414318]]
+ &lt;NDArray 1x3 @cpu(0)&gt;, &#39;bias:&#39;,
+ [ 4.95168018]
+ &lt;NDArray 1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="线性函数拟合（欠拟合）">
+<h3>线性函数拟合（欠拟合）<a class="headerlink" href="#线性函数拟合（欠拟合）" title="永久链接至标题">¶</a></h3>
+<p>我们再试试线性函数拟合。很明显，该模型的训练误差在迭代早期下降后便很难继续降低。在完成最后一次迭代周期后，训练误差依旧很高。线性模型在非线性模型（例如三阶多项式函数）生成的数据集上容易欠拟合。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">fit_and_plot</span><span class="p">(</span><span class="n">features</span><span class="p">[:</span><span class="n">n_train</span><span class="p">,</span> <span class="p">:],</span> <span class="n">features</span><span class="p">[</span><span class="n">n_train</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">labels</span><span class="p">[:</span><span class="n">n_train</span><span class="p">],</span>
+             <span class="n">labels</span><span class="p">[</span><span class="n">n_train</span><span class="p">:])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+final epoch: train loss 43.9979 test loss 160.635
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/chapter_supervised-learning_underfit-overfit_13_1.png" src="../_images/chapter_supervised-learning_underfit-overfit_13_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(&#39;weight:&#39;,
+ [[ 15.578722]]
+ &lt;NDArray 1x1 @cpu(0)&gt;, &#39;bias:&#39;,
+ [ 2.28405309]
+ &lt;NDArray 1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="训练量不足（过拟合）">
+<h3>训练量不足（过拟合）<a class="headerlink" href="#训练量不足（过拟合）" title="永久链接至标题">¶</a></h3>
+<p>事实上，即便是使用与数据生成模型同阶的三阶多项式函数模型，如果训练量不足，该模型依然容易过拟合。</p>
+<p>让我们仅仅使用两个样本来训练模型。显然，训练样本过少了，甚至少于模型参数的数量。这使模型显得过于复杂，以至于容易被训练数据中的噪音影响。在迭代过程中，即便训练误差较低，但是测试数据集上的误差却很高。这是典型的过拟合现象。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">fit_and_plot</span><span class="p">(</span><span class="n">poly_features</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:],</span> <span class="n">poly_features</span><span class="p">[</span><span class="n">n_train</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span>
+             <span class="n">labels</span><span class="p">[</span><span class="n">n_train</span><span class="p">:])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+final epoch: train loss 0.402737 test loss 103.314
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/chapter_supervised-learning_underfit-overfit_15_1.png" src="../_images/chapter_supervised-learning_underfit-overfit_15_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[8]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(&#39;weight:&#39;,
+ [[ 1.38723636  1.93765891  3.50859237]]
+ &lt;NDArray 1x3 @cpu(0)&gt;, &#39;bias:&#39;,
+ [ 1.23128557]
+ &lt;NDArray 1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+<p>我们将在后面的章节继续讨论过拟合问题以及应对过拟合的方法，例如正则化和丢弃法。</p>
+</div>
+</div>
+<div class="section" id="模型选择">
+<h2>模型选择<a class="headerlink" href="#模型选择" title="永久链接至标题">¶</a></h2>
+<p>我们已经知道，训练误差无法被用来估计泛化误差。那我们是否可以根据测试数据集上的误差来调节超参数和选择模型呢？答案是否定的。原因很简单：为降低测试数据集误差而修改模型将使本节开始的“独立同分布假设”不再成立。此时测试数据集的误差无法正确反映泛化误差。</p>
+<p>在选择模型时，我们可以切分原始训练数据集：其中大部分样本组成新的训练数据集，剩下的组成验证数据集（validation
+data
+set）。我们在新的训练数据集上训练模型，并根据模型在验证数据集上的表现调参和选择模型。最后，我们在测试数据集上评价模型的表现。</p>
+<div class="section" id="-折交叉验证">
+<h3><span class="math">\(K\)</span> 折交叉验证<a class="headerlink" href="#-折交叉验证" title="永久链接至标题">¶</a></h3>
+<p>验证模型还有很多其他的方法。其中一种常用方法叫做<span class="math">\(K\)</span>
+折交叉验证（<span class="math">\(k\)</span>-fold cross-validation）。</p>
+<p>在K折交叉验证中，我们把原始训练数据集分割成<span class="math">\(K\)</span>个不重合的子数据集。然后我们做<span class="math">\(K\)</span>次模型训练和验证。每一次，我们使用一个子数据集验证模型，并使用其他<span class="math">\(K-1\)</span>个子数据集来训练模型。在这<span class="math">\(K\)</span>次训练和验证中，每次用来验证模型的子数据集都不同。最后，我们只需对这<span class="math">\(K\)</span>次训练误差和验证误差分别求平均作为最终的训练误差和验证误差。</p>
+<p>我们将在本章最后一节实验<span class="math">\(K\)</span> 折交叉验证。</p>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>我们希望通过适当降低模型的训练误差，从而能够间接降低模型的泛化误差。</li>
+<li>欠拟合指模型无法得到较低的训练误差；过拟合指模型的训练误差远小于它在测试数据集上的误差。</li>
+<li>我们应选择复杂度合适的模型并避免使用过少的训练样本。</li>
+<li>我们要避免根据测试数据集上的误差来选择模型和调节超参数。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>如果用一个三阶多项式模型来拟合一个线性模型生成的数据，可能会有什么问题？为什么？</li>
+<li>在我们本节提到的三阶多项式拟合问题里，有没有可能把100个样本的训练误差的期望降到0，为什么？</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/983">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_underfit-overfit.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reg-scratch.html" class="btn btn-neutral float-right" title="正则化——从零开始" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mlp-gluon.html" class="btn btn-neutral" title="多层感知机——使用Gluon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

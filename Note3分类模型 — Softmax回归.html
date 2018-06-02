@@ -1,0 +1,953 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Softmax回归——从零开始 &mdash; 动手学深度学习  文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/gluon_s2.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gluon.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Softmax回归——使用Gluon" href="softmax-regression-gluon.html" />
+    <link rel="prev" title="分类模型" href="classification.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> 动手学深度学习
+          
+
+          
+            
+            <img src="../_static/gluon_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_crashcourse/index.html">预备知识</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">深度学习基础</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="shallow-model.html">单层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">线性回归——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-gluon.html">线性回归——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html">分类模型</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Softmax回归——从零开始</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#获取Fashion-MNIST数据集">获取Fashion-MNIST数据集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#读取数据">读取数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#初始化模型参数">初始化模型参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义Softmax运算">定义Softmax运算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义模型">定义模型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#定义损失函数">定义损失函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#计算分类准确率">计算分类准确率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#训练模型">训练模型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#预测">预测</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#小结">小结</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#练习">练习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#扫码直达讨论区">扫码直达讨论区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-gluon.html">Softmax回归——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi-layer.html">多层神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-scratch.html">多层感知机——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp-gluon.html">多层感知机——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="underfit-overfit.html">欠拟合、过拟合和模型选择</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reg-scratch.html">正则化——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reg-gluon.html">正则化——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-scratch.html">丢弃法——从零开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout-gluon.html">丢弃法——使用Gluon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backprop.html">正向传播和反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-gluon-kfold.html">实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-basics/index.html">深度学习计算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">卷积神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">循环神经网络</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">优化算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gluon-advances/index.html">计算性能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">计算机视觉</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing/index.html">自然语言处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">动手学深度学习</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">深度学习基础</a> &raquo;</li>
+        
+      <li>Softmax回归——从零开始</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/chapter_supervised-learning/softmax-regression-scratch.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Softmax回归——从零开始">
+<h1>Softmax回归——从零开始<a class="headerlink" href="#Softmax回归——从零开始" title="永久链接至标题">¶</a></h1>
+<p>下面我们来动手实现Softmax回归。首先，导入实验所需的包或模块。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">gluonbook</span> <span class="kn">as</span> <span class="nn">gb</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">nd</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">gdata</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="获取Fashion-MNIST数据集">
+<h2>获取Fashion-MNIST数据集<a class="headerlink" href="#获取Fashion-MNIST数据集" title="永久链接至标题">¶</a></h2>
+<p>本节中，我们考虑图片分类问题。我们使用一个类别为服饰的数据集Fashion-MNIST
+[1]。该数据集中，图片尺寸为:math:<cite>28 times 28</cite>，一共包括了10个类别，分别为：t-shirt（T恤）、trouser（裤子）、pullover（套衫）、dress（连衣裙）、coat（外套）、sandal（凉鞋）、shirt（衬衫）、sneaker（运动鞋）、bag（包）和ankle
+boot（短靴）。</p>
+<p>下面，我们通过Gluon的<code class="docutils literal"><span class="pre">data</span></code>包来下载这个数据集。由于图片中每个像素的值在0到255之间，我们可以通过定义<code class="docutils literal"><span class="pre">transform</span></code>函数将每个值转换为0到1之间。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">feature</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+
+<span class="n">mnist_train</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+<span class="n">mnist_test</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>打印一个样本的形状和它的标签看看。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">feature</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">mnist_train</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="s1">&#39;feature shape: &#39;</span><span class="p">,</span> <span class="n">feature</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;label: &#39;</span><span class="p">,</span> <span class="n">label</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(&#39;feature shape: &#39;, (28, 28, 1), &#39;label: &#39;, 2.0)
+</pre></div>
+</div>
+</div>
+<p>注意到上面的标签是个数字。以下函数可以将数字标签转成相应的文本标签。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">get_text_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+    <span class="n">text_labels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;t-shirt&#39;</span><span class="p">,</span> <span class="s1">&#39;trouser&#39;</span><span class="p">,</span> <span class="s1">&#39;pullover&#39;</span><span class="p">,</span> <span class="s1">&#39;dress&#39;</span><span class="p">,</span> <span class="s1">&#39;coat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;sandal&#39;</span><span class="p">,</span> <span class="s1">&#39;shirt&#39;</span><span class="p">,</span> <span class="s1">&#39;sneaker&#39;</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="s1">&#39;ankle boot&#39;</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">text_labels</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>我们再定义一个函数来描绘图片内容。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">show_fashion_imgs</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">figs</span> <span class="o">=</span> <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">figs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
+        <span class="n">figs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">figs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">gb</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>现在，我们看一下训练数据集中前9个样本的图片内容和文本标签。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mnist_train</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">show_fashion_imgs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">get_text_labels</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/chapter_supervised-learning_softmax-regression-scratch_11_0.png" src="../_images/chapter_supervised-learning_softmax-regression-scratch_11_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;pullover&#39;, &#39;ankle boot&#39;, &#39;shirt&#39;, &#39;t-shirt&#39;, &#39;dress&#39;, &#39;coat&#39;, &#39;coat&#39;, &#39;sandal&#39;, &#39;coat&#39;]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="读取数据">
+<h2>读取数据<a class="headerlink" href="#读取数据" title="永久链接至标题">¶</a></h2>
+<p>Fashion-MNIST包括训练数据集和测试数据集（testing data
+set）。我们将在训练数据集上训练模型，并将训练好的模型在测试数据集上评价模型的表现。我们可以像<a class="reference internal" href="linear-regression-scratch.html"><span class="doc">“线性回归——从零开始”</span></a>一节中那样通过<code class="docutils literal"><span class="pre">yield</span></code>来定义读取小批量数据样本的函数。为了简洁，这里我们直接创建DataLoader实例，从而每次读取一个样本数为<code class="docutils literal"><span class="pre">batch_size</span></code>的小批量。这里的批量大小<code class="docutils literal"><span class="pre">batch_size</span></code>是一个超参数。需要注意的是，我们每次从训练数据集里读取的小批量是由随机样本组成的。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">train_iter</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">mnist_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">test_iter</span> <span class="o">=</span> <span class="n">gdata</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">mnist_test</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>我们将获取并读取Fashion-MNIST数据集的逻辑封装在<code class="docutils literal"><span class="pre">gluonbook.load_data_fashion_mnist</span></code>函数中供后面章节调用。</p>
+</div>
+<div class="section" id="初始化模型参数">
+<h2>初始化模型参数<a class="headerlink" href="#初始化模型参数" title="永久链接至标题">¶</a></h2>
+<p>跟线性回归中的例子一样，我们将使用向量表示每个样本。已知每个样本是大小为<span class="math">\(28 \times 28\)</span>的图片。模型的输入向量的长度是<span class="math">\(28 \times 28 = 784\)</span>：该向量的每个元素对应图片中每个像素。由于图片有10个类别，单层神经网络输出层的输出个数为10。由上一节可知，Softmax回归的权重和偏差参数分别为<span class="math">\(784 \times 10\)</span>和<span class="math">\(1 \times 10\)</span>的矩阵。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">num_inputs</span> <span class="o">=</span> <span class="mi">784</span>
+<span class="n">num_outputs</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_inputs</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_outputs</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">W</span><span class="p">,</span> <span class="n">b</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>同之前一样，我们要对模型参数附上梯度。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义Softmax运算">
+<h2>定义Softmax运算<a class="headerlink" href="#定义Softmax运算" title="永久链接至标题">¶</a></h2>
+<p>在介绍如何定义Softmax回归之前，我们先描述一下对如何对多维NDArray按维度操作。</p>
+<p>在下面例子中，给定一个NDArray矩阵<code class="docutils literal"><span class="pre">X</span></code>。我们可以只对其中每一列（<code class="docutils literal"><span class="pre">axis=0</span></code>）或每一行（<code class="docutils literal"><span class="pre">axis=1</span></code>）求和，并在结果中保留行和列这两个维度（<code class="docutils literal"><span class="pre">keepdims=True</span></code>）。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">X</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="n">X</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">X</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[10]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[ 5.  7.  9.]]
+ &lt;NDArray 1x3 @cpu(0)&gt;,
+ [[  6.]
+  [ 15.]]
+ &lt;NDArray 2x1 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+<p>下面我们就可以定义上一节中介绍的Softmax运算了。在下面的函数中，矩阵<code class="docutils literal"><span class="pre">X</span></code>的行数是样本数，列数是输出个数。为了表达样本预测各个输出的概率，Softmax运算会先通过<code class="docutils literal"><span class="pre">exp</span> <span class="pre">=</span> <span class="pre">nd.exp(X)</span></code>对每个元素做指数运算，再对<code class="docutils literal"><span class="pre">exp</span></code>矩阵的每行求和，最后令矩阵每行各元素与该行元素之和相除。这样一来，最终得到的矩阵每行元素和为1且非负（应用了指数运算）。因此，该矩阵每行都是合法的概率分布。Softmax运算的输出矩阵中的任意一行元素是一个样本在各个类别上的概率。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
+    <span class="n">partition</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exp</span> <span class="o">/</span> <span class="n">partition</span> <span class="c1"># 这里应用了广播机制。</span>
+</pre></div>
+</div>
+</div>
+<p>可以看到，对于随机输入，我们将每个元素变成了非负数，而且每一行加起来为1。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">X</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">X_prob</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">X_prob</span><span class="p">,</span> <span class="n">X_prob</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(
+ [[ 0.21324193  0.33961776  0.1239742   0.27106097  0.05210521]
+  [ 0.11462264  0.3461234   0.19401033  0.29583326  0.04941036]]
+ &lt;NDArray 2x5 @cpu(0)&gt;,
+ [ 1.00000012  1.        ]
+ &lt;NDArray 2 @cpu(0)&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义模型">
+<h2>定义模型<a class="headerlink" href="#定义模型" title="永久链接至标题">¶</a></h2>
+<p>有了Softmax运算，我们可以定义上节描述的Softmax回归模型了。这里通过<code class="docutils literal"><span class="pre">reshape</span></code>函数将每张原始图片改成长度为<code class="docutils literal"><span class="pre">num_inputs</span></code>的向量。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">net</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">softmax</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_inputs</span><span class="p">)),</span> <span class="n">W</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="定义损失函数">
+<h2>定义损失函数<a class="headerlink" href="#定义损失函数" title="永久链接至标题">¶</a></h2>
+<p>上一节中，我们介绍了Softmax回归使用的交叉熵损失函数。为了得到标签的被预测概率，我们可以使用<code class="docutils literal"><span class="pre">pick</span></code>函数。在下面例子中，<code class="docutils literal"><span class="pre">y_hat</span></code>是2个样本在3个类别的预测概率，<code class="docutils literal"><span class="pre">y</span></code>是两个样本的标签类别。通过使用<code class="docutils literal"><span class="pre">pick</span></code>函数，我们得到了2个样本的标签的被预测概率。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">y_hat</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">nd</span><span class="o">.</span><span class="n">pick</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[14]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+
+<span></span>[ 0.1  0.5]
+&lt;NDArray 2 @cpu(0)&gt;
+</pre></div>
+</div>
+</div>
+<p>下面，我们直接将上一节中的交叉熵损失函数翻译成代码。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">nd</span><span class="o">.</span><span class="n">pick</span><span class="p">(</span><span class="n">y_hat</span><span class="o">.</span><span class="n">log</span><span class="p">(),</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="计算分类准确率">
+<h2>计算分类准确率<a class="headerlink" href="#计算分类准确率" title="永久链接至标题">¶</a></h2>
+<p>给定一个类别的预测概率分布<code class="docutils literal"><span class="pre">y_hat</span></code>，我们把预测概率最大的类别作为输出类别。如果它与真实类别<code class="docutils literal"><span class="pre">y</span></code>一致，说明这次预测是正确的。分类准确率即正确预测数量与总预测数量的比。</p>
+<p>下面定义<code class="docutils literal"><span class="pre">accuracy</span></code>函数。其中<code class="docutils literal"><span class="pre">y_hat.argmax(axis=1)</span></code>返回矩阵<code class="docutils literal"><span class="pre">y_hat</span></code>每行中最大元素的索引，且返回结果与<code class="docutils literal"><span class="pre">y</span></code>形状相同。我们在<a class="reference internal" href="../chapter_crashcourse/ndarray.html"><span class="doc">“数据操作”</span></a>一节介绍过，条件判断式<code class="docutils literal"><span class="pre">(y_hat.argmax(axis=1)</span> <span class="pre">==</span> <span class="pre">y)</span></code>是一个值为0或1的NDArray。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y_hat</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>让我们继续使用在演示<code class="docutils literal"><span class="pre">pick</span></code>函数时定义的<code class="docutils literal"><span class="pre">y_hat</span></code>和<code class="docutils literal"><span class="pre">y</span></code>，分别作为预测概率分布和标签。可以看到，第一个样本预测类别为2（该行最大元素0.6在本行的索引），与真实标签不一致；第二个样本预测类别为2（该行最大元素0.5在本行的索引），与真实标签一致。因此，这两个样本上的分类准确率为0.5。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[17]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>0.5
+</pre></div>
+</div>
+</div>
+<p>类似地，我们可以评价模型<code class="docutils literal"><span class="pre">net</span></code>在数据集<code class="docutils literal"><span class="pre">data_iter</span></code>上的准确率。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">evaluate_accuracy</span><span class="p">(</span><span class="n">data_iter</span><span class="p">,</span> <span class="n">net</span><span class="p">):</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
+        <span class="n">acc</span> <span class="o">+=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">acc</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_iter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>因为我们随机初始化了模型<code class="docutils literal"><span class="pre">net</span></code>，所以这个模型的准确率应该接近于<code class="docutils literal"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">num_outputs</span> <span class="pre">=</span> <span class="pre">0.1</span></code>。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [19]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">evaluate_accuracy</span><span class="p">(</span><span class="n">test_iter</span><span class="p">,</span> <span class="n">net</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[19]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>0.0947265625
+</pre></div>
+</div>
+</div>
+<p>我们将<code class="docutils literal"><span class="pre">accuracy</span></code>和<code class="docutils literal"><span class="pre">evaluate_accuracy</span></code>函数定义在<code class="docutils literal"><span class="pre">gluonbook</span></code>包中供后面章节调用。</p>
+</div>
+<div class="section" id="训练模型">
+<h2>训练模型<a class="headerlink" href="#训练模型" title="永久链接至标题">¶</a></h2>
+<p>训练Softmax回归的实现跟前面线性回归中的实现非常相似。我们同样使用小批量随机梯度下降来优化模型的损失函数。在训练模型时，迭代周期数<code class="docutils literal"><span class="pre">num_epochs</span></code>和学习率<code class="docutils literal"><span class="pre">lr</span></code>都是可以调的超参数。改变它们的值可能会得到分类更准确的模型。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [20]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">cross_entropy</span>
+
+<span class="k">def</span> <span class="nf">train_cpu</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">train_iter</span><span class="p">,</span> <span class="n">test_iter</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">num_epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
+              <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">trainer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">train_l_sum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">train_acc_sum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_iter</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+                <span class="n">y_hat</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">trainer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">gb</span><span class="o">.</span><span class="n">sgd</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">train_l_sum</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+            <span class="n">train_acc_sum</span> <span class="o">+=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">test_acc</span> <span class="o">=</span> <span class="n">evaluate_accuracy</span><span class="p">(</span><span class="n">test_iter</span><span class="p">,</span> <span class="n">net</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;epoch </span><span class="si">%d</span><span class="s2">, loss </span><span class="si">%.4f</span><span class="s2">, train acc </span><span class="si">%.3f</span><span class="s2">, test acc </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+              <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">train_l_sum</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_iter</span><span class="p">),</span>
+                 <span class="n">train_acc_sum</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_iter</span><span class="p">),</span> <span class="n">test_acc</span><span class="p">))</span>
+
+<span class="n">train_cpu</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">train_iter</span><span class="p">,</span> <span class="n">test_iter</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">num_epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+          <span class="n">lr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch 1, loss 0.7877, train acc 0.746, test acc 0.787
+epoch 2, loss 0.5743, train acc 0.811, test acc 0.826
+epoch 3, loss 0.5290, train acc 0.823, test acc 0.829
+epoch 4, loss 0.5042, train acc 0.831, test acc 0.835
+epoch 5, loss 0.4896, train acc 0.835, test acc 0.840
+</pre></div></div>
+</div>
+<p>我们将<code class="docutils literal"><span class="pre">train_cpu</span></code>函数定义在<code class="docutils literal"><span class="pre">gluonbook</span></code>包中供后面章节调用。</p>
+</div>
+<div class="section" id="预测">
+<h2>预测<a class="headerlink" href="#预测" title="永久链接至标题">¶</a></h2>
+<p>训练完成后，现在我们可以演示如何对图片进行分类。给定一系列图片，我们比较一下它们的真实标签和模型预测结果。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [21]:
+</pre></div>
+</div>
+<div class="input_area highlight-python"><div class="highlight"><pre>
+<span></span><span class="n">data</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">mnist_test</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">show_fashion_imgs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;labels:&#39;</span><span class="p">,</span> <span class="n">get_text_labels</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+<span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;predictions:&#39;</span><span class="p">,</span> <span class="n">get_text_labels</span><span class="p">(</span><span class="n">predicted_labels</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/chapter_supervised-learning_softmax-regression-scratch_41_0.png" src="../_images/chapter_supervised-learning_softmax-regression-scratch_41_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+labels: [&#39;t-shirt&#39;, &#39;trouser&#39;, &#39;pullover&#39;, &#39;pullover&#39;, &#39;dress&#39;, &#39;pullover&#39;, &#39;bag&#39;, &#39;shirt&#39;, &#39;sandal&#39;]
+predictions: [&#39;t-shirt&#39;, &#39;trouser&#39;, &#39;pullover&#39;, &#39;t-shirt&#39;, &#39;coat&#39;, &#39;shirt&#39;, &#39;bag&#39;, &#39;shirt&#39;, &#39;sandal&#39;]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="小结">
+<h2>小结<a class="headerlink" href="#小结" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>与训练线性回归相比，你会发现训练Softmax回归的步骤跟其非常相似：获取并读取数据、定义模型和损失函数并使用优化算法训练模型。事实上，绝大多数深度学习模型的训练都有着类似的步骤。</li>
+<li>我们可以使用Softmax回归做多类别分类。</li>
+</ul>
+</div>
+<div class="section" id="练习">
+<h2>练习<a class="headerlink" href="#练习" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>本节中，我们直接按照Softmax运算的数学定义来实现<code class="docutils literal"><span class="pre">softmax</span></code>函数。这可能会造成什么问题？（试一试计算<span class="math">\(e^{50}\)</span>的大小。）</li>
+<li>本节中的<code class="docutils literal"><span class="pre">cross_entropy</span></code>函数同样是按照交叉熵损失函数的数学定义实现的。这样的实现方式可能有什么问题？（思考一下对数函数的定义域。）</li>
+<li>你能想到哪些办法来解决上面这两个问题？</li>
+</ul>
+</div>
+<div class="section" id="扫码直达讨论区">
+<h2>扫码直达<a class="reference external" href="https://discuss.gluon.ai/t/topic/741">讨论区</a><a class="headerlink" href="#扫码直达讨论区" title="永久链接至标题">¶</a></h2>
+<div class="figure">
+<img alt="" src="../_images/qr_softmax-regression-scratch.svg" /></div>
+</div>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="永久链接至标题">¶</a></h2>
+<p>[1] Xiao, Han, Kashif Rasul, and Roland Vollgraf. “Fashion-mnist: a
+novel image dataset for benchmarking machine learning algorithms.” arXiv
+preprint arXiv:1708.07747 (2017).</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="softmax-regression-gluon.html" class="btn btn-neutral float-right" title="Softmax回归——使用Gluon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classification.html" class="btn btn-neutral" title="分类模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/baidu_tongji.js"></script>
+      <script type="text/javascript" src="../_static/google_analytics.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
